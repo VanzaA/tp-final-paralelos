@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
     }
   }
 
-#pragma omp parallel for shared(original_grid, new_grid) private(i, j, temp, max_diff) reduction(max \
-                                                                                                 : max_diff)
+#pragma omp parallel for shared(original_grid, new_grid) private(i, j, temp) reduction(max \
+                                                                                       : max_diff)
   for (i = 1; i < matrix_size - 1; i = i + 1)
   {
     for (j = 1; j < matrix_size - 1; j = j + 1)
