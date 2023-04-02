@@ -67,18 +67,20 @@ int main(int argc, char *argv[])
   for (iters = 1; iters <= iterations; iters = iters + 2)
   {
 
-#pragma omp parallel for shared(original_grid, new_grid) private(i, j)
+#pragma omp parallel for shared(original_grid, new_grid) private(j)
     for (i = 1; i < matrix_size - 1; i = i + 1)
     {
+#pragma omp parallel for
       for (j = 1; j < matrix_size - 1; j = j + 1)
       {
         new_grid[i * matrix_size + j] = (original_grid[i * matrix_size + j + 1] + original_grid[i * matrix_size + j - 1] + original_grid[(i + 1) * matrix_size + j] + original_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
     }
 
-#pragma omp parallel for shared(original_grid, new_grid) private(i, j)
+#pragma omp parallel for shared(original_grid, new_grid) private(j)
     for (i = 1; i < matrix_size - 1; i = i + 1)
     {
+#pragma omp parallel for
       for (j = 1; j < matrix_size - 1; j = j + 1)
       {
         original_grid[i * matrix_size + j] = (new_grid[i * matrix_size + j + 1] + new_grid[i * matrix_size + j - 1] + new_grid[(i + 1) * matrix_size + j] + new_grid[(i - 1) * matrix_size + j]) * 0.25;
@@ -86,10 +88,11 @@ int main(int argc, char *argv[])
     }
   }
 
-#pragma omp parallel for shared(original_grid, new_grid) private(i, j, temp) reduction(max \
-                                                                                       : max_diff)
+#pragma omp parallel for shared(original_grid, new_grid) private(j) reduction(max \
+                                                                              : max_diff)
   for (i = 1; i < matrix_size - 1; i = i + 1)
   {
+#pragma omp parallel for
     for (j = 1; j < matrix_size - 1; j = j + 1)
     {
       temp = original_grid[i * matrix_size + j] - new_grid[i * matrix_size + j];
