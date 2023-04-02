@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   int ids[thread_number];
   local_max_diff = (double *)malloc(sizeof(double) * thread_number);
   // The argument represent the size of the matriz internal points and add 1 for the border
-  matrix_size = atoi(argv[1]) + 1, iterations = atoi(argv[2]);
+  matrix_size = atoi(argv[2]) + 1, iterations = atoi(argv[3]);
 
   original_grid = (double *)malloc(sizeof(double) * matrix_size * matrix_size);
   new_grid = (double *)malloc(sizeof(double) * matrix_size * matrix_size);
@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
       new_grid[i * matrix_size + j] = value;
     }
   }
+
+  printf("teeeeeest: %f\n", new_grid[0 - 1]);
 
 #ifdef DEBUG
   if (getenv("DEBUG"))
@@ -114,11 +116,21 @@ void *get_max_diff(void *arg)
       limit = (matrix_size / thread_number) * (tid + 1),
       i, j, iters;
 
+  if (start == 0)
+  {
+    start = start + 1;
+  }
+
+  if (limit == matrix_size)
+  {
+    limit = limit - 1;
+  }
+
   for (iters = 1; iters <= iterations; iters = iters + 2)
   {
-    for (i = start; i < limit - 1; i = i + 1)
+    for (i = start; i < limit; i = i + 1)
     {
-      for (j = start; j < limit - 1; j = j + 1)
+      for (j = start; j < limit; j = j + 1)
       {
         new_grid[i * matrix_size + j] = (original_grid[i * matrix_size + j + 1] + original_grid[i * matrix_size + j - 1] + original_grid[(i + 1) * matrix_size + j] + original_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
