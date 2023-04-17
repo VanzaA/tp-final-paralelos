@@ -1,2 +1,5 @@
-access.pdf
+*.pdf
 build/
+credentials
+*.sh
+copy-from-host/

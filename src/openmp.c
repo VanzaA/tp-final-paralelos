@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
   omp_set_num_threads(thread_number);
   // The argument represent the size of the matriz internal points and add 1 for the border
   int i, j, iters, matrix_size = atoi(argv[2]) + 1, iterations = atoi(argv[3]);
+  printf("openmp/// matrix size: %i --------------- thread number: %i \n", matrix_size, thread_number);
 
   double temp, *original_grid, *new_grid, max_diff = 0;
   original_grid = (double *)malloc(sizeof(double) * matrix_size * matrix_size);
@@ -67,33 +68,30 @@ int main(int argc, char *argv[])
   for (iters = 1; iters <= iterations; iters = iters + 2)
   {
 
-#pragma omp parallel for shared(original_grid, new_grid) private(j, i)
-    for (i = 1; i < matrix_size - 1; i = i + 1)
+#pragma omp parallel for shared(original_grid, new_grid, matrix_size) private(j, i)
+    for (i = 1; i < matrix_size; i = i + 1)
     {
-#pragma omp parallel for
-      for (j = 1; j < matrix_size - 1; j = j + 1)
+      for (j = 1; j < matrix_size; j = j + 1)
       {
         new_grid[i * matrix_size + j] = (original_grid[i * matrix_size + j + 1] + original_grid[i * matrix_size + j - 1] + original_grid[(i + 1) * matrix_size + j] + original_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
     }
 
-#pragma omp parallel for shared(original_grid, new_grid) private(j, i)
-    for (i = 1; i < matrix_size - 1; i = i + 1)
+#pragma omp parallel for shared(original_grid, new_grid, matrix_size) private(j, i)
+    for (i = 1; i < matrix_size; i = i + 1)
     {
-#pragma omp parallel for
-      for (j = 1; j < matrix_size - 1; j = j + 1)
+      for (j = 1; j < matrix_size; j = j + 1)
       {
         original_grid[i * matrix_size + j] = (new_grid[i * matrix_size + j + 1] + new_grid[i * matrix_size + j - 1] + new_grid[(i + 1) * matrix_size + j] + new_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
     }
   }
 
-#pragma omp parallel for shared(original_grid, new_grid) private(i, j, temp) reduction(max \
+#pragma omp parallel for shared(original_grid, new_grid, matrix_size) private(i, j, temp) reduction(max \
                                                                                        : max_diff)
-  for (i = 1; i < matrix_size - 1; i = i + 1)
+  for (i = 1; i < matrix_size; i = i + 1)
   {
-#pragma omp parallel for
-    for (j = 1; j < matrix_size - 1; j = j + 1)
+    for (j = 1; j < matrix_size; j = j + 1)
     {
       temp = original_grid[i * matrix_size + j] - new_grid[i * matrix_size + j];
       if (temp < 0)

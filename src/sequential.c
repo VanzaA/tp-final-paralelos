@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
   // The argument represent the size of the matriz internal points and add 1 for the border
   int i, j, iters, matrix_size = atoi(argv[1]) + 1, iterations = atoi(argv[2]);
+  printf("sequential---- matrix size: %i\n", matrix_size);
 
   double temp, *original_grid, *new_grid, max_diff = 0;
   original_grid = (double *)malloc(sizeof(double) * matrix_size * matrix_size);
@@ -63,26 +64,26 @@ int main(int argc, char *argv[])
   double timetick = dwalltime();
   for (iters = 1; iters <= iterations; iters = iters + 2)
   {
-    for (i = 1; i < matrix_size - 1; i = i + 1)
+    for (i = 1; i < matrix_size; i = i + 1)
     {
-      for (j = 1; j < matrix_size - 1; j = j + 1)
+      for (j = 1; j < matrix_size; j = j + 1)
       {
         new_grid[i * matrix_size + j] = (original_grid[i * matrix_size + j + 1] + original_grid[i * matrix_size + j - 1] + original_grid[(i + 1) * matrix_size + j] + original_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
     }
 
-    for (i = 1; i < matrix_size - 1; i = i + 1)
+    for (i = 1; i < matrix_size; i = i + 1)
     {
-      for (j = 1; j < matrix_size - 1; j = j + 1)
+      for (j = 1; j < matrix_size; j = j + 1)
       {
         original_grid[i * matrix_size + j] = (new_grid[i * matrix_size + j + 1] + new_grid[i * matrix_size + j - 1] + new_grid[(i + 1) * matrix_size + j] + new_grid[(i - 1) * matrix_size + j]) * 0.25;
       }
     }
   }
 
-  for (i = 1; i < matrix_size - 1; i = i + 1)
+  for (i = 1; i < matrix_size; i = i + 1)
   {
-    for (j = 1; j < matrix_size - 1; j = j + 1)
+    for (j = 1; j < matrix_size; j = j + 1)
     {
       temp = original_grid[i * matrix_size + j] - new_grid[i * matrix_size + j];
       if (temp < 0)
@@ -91,7 +92,6 @@ int main(int argc, char *argv[])
         max_diff = temp;
     }
   }
-
   printf("total time: %f\n", dwalltime() - timetick);
   printf("maximum difference: %f\n", max_diff);
 
